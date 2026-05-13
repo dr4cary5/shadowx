@@ -5,23 +5,30 @@ import (
     "fmt"
     "io"
     "net/http"
+    "net/url"
     "strings"
     "time"
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-    url := r.URL.Query().Get("url")
+    targetURL := r.URL.Query().Get("url")
 
     // صفحه اصلی با کادر ورود URL
-    if url == "" {
+    if targetURL == "" {
         w.Header().Set("Content-Type", "text/html; charset=utf-8")
         w.Write([]byte(homePage))
         return
     }
 
+    // decode URL if it's encoded
+    decodedURL, err := url.QueryUnescape(targetURL)
+    if err == nil {
+        targetURL = decodedURL
+    }
+
     // اضافه کردن پروتکل
-    if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-        url = "https://" + url
+    if !strings.HasPrefix(targetURL, "http://") && !strings.HasPrefix(targetURL, "https://") {
+        targetURL = "https://" + targetURL
     }
 
     // ساخت کلاینت با تنظیمات پیشرفته
@@ -36,7 +43,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
     }
 
     // ساخت درخواست
-    req, err := http.NewRequest("GET", url, nil)
+    req, err := http.NewRequest(r.Method, targetURL, r.Body)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
@@ -48,7 +55,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
     req.Header.Set("Accept-Language", "en-US,en;q=0.5")
     req.Header.Set("Accept-Encoding", "gzip, deflate")
     req.Header.Set("Cache-Control", "no-cache")
-    req.Header.Set("Pragma", "no-cache")
 
     // ارسال درخواست
     resp, err := client.Do(req)
@@ -60,11 +66,11 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
     // کپی هدرهای پاسخ
     skipHeaders := map[string]bool{
-        "Content-Encoding":    true,
-        "Content-Length":      true,
-        "Transfer-Encoding":   true,
-        "Strict-Transport-Security": true,
-        "Content-Security-Policy":   true,
+        "Content-Encoding":          true,
+        "Content-Length":            true,
+        "Transfer-Encoding":         true,
+        "Strict-Transport-Security":  true,
+        "Content-Security-Policy":    true,
     }
 
     for key, values := range resp.Header {
@@ -119,11 +125,7 @@ const homePage = `<!DOCTYPE html>
             max-width: 700px;
             border: 1px solid #222;
         }
-        .logo {
-            text-align: center;
-            font-size: 4rem;
-            margin-bottom: 0.5rem;
-        }
+        .logo { text-align: center; font-size: 4rem; margin-bottom: 0.5rem; }
         h1 {
             text-align: center;
             color: #8a2be2;
@@ -138,11 +140,7 @@ const homePage = `<!DOCTYPE html>
             margin-bottom: 2rem;
             font-style: italic;
         }
-        .url-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-        }
+        .url-form { display: flex; gap: 10px; margin-bottom: 1.5rem; }
         input {
             flex: 1;
             padding: 16px;
@@ -167,13 +165,7 @@ const homePage = `<!DOCTYPE html>
             transition: all 0.3s;
         }
         button:hover { background: #8a2be2; transform: scale(1.02); }
-        .features {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
-        }
+        .features { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
         .feature {
             background: #1a1a1a;
             padding: 8px 16px;
