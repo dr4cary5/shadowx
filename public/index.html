@@ -3,34 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShadowX</title>
+    <title>ShadowX - Development Environment</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: #0a0a0a;
             color: #e0e0e0;
+            line-height: 1.6;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: #0d0d0d;
+            border-bottom: 1px solid #1a1a1a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8a2be2;
+            letter-spacing: 2px;
+        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+        .nav-links a:hover { color: #6e00ff; }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 5%;
+            background: linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%);
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            color: #8a2be2;
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #1a1a1a;
+            color: #6e00ff;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            border: 1px solid #6e00ff;
+            font-size: 0.9rem;
+            margin: 0.5rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 4rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 15px;
+            padding: 2rem;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .feature-card:hover {
+            border-color: #6e00ff;
+            transform: translateY(-5px);
+        }
+        .feature-card h3 {
+            color: #8a2be2;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .feature-card p { color: #777; font-size: 0.95rem; }
+
+        .tech-stack {
+            text-align: center;
+            padding: 4rem 5%;
+            background: #0d0d0d;
+            border-top: 1px solid #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .tech-stack h2 { color: #8a2be2; margin-bottom: 2rem; }
+        .tech-items {
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
-            text-align: center;
+            gap: 2rem;
+            flex-wrap: wrap;
         }
-        h1 { color: #8a2be2; font-size: 2.5rem; margin-bottom: 1rem; }
-        p { color: #888; max-width: 500px; line-height: 1.6; }
-        .status { 
-            margin-top: 2rem; 
-            padding: 1rem 2rem; 
-            background: #1a1a1a; 
+        .tech-item {
+            background: #1a1a1a;
+            padding: 0.8rem 1.5rem;
             border-radius: 10px;
-            border: 1px solid #333;
+            color: #ccc;
+            font-size: 0.9rem;
         }
+
+        .github-section {
+            text-align: center;
+            padding: 4rem 5%;
+        }
+        .github-section h2 { color: #8a2be2; margin-bottom: 1rem; }
+        .github-section a {
+            display: inline-block;
+            background: #6e00ff;
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+        .github-section a:hover { background: #8a2be2; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #444;
+            font-size: 0.85rem;
+            border-top: 1px solid #1a1a1a;
+        }
+        footer a { color: #6e00ff; text-decoration: none; }
     </style>
 </head>
 <body>
-    <h1>🕶️ ShadowX</h1>
-    <p>A development tool for testing serverless functions and edge caching behavior.</p>
-    <div class="status">🚧 Staging Environment — Active Development</div>
+    <nav>
+        <div class="logo">🕶️ ShadowX</div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#tech">Tech Stack</a></li>
+            <li><a href="#github">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>ShadowX</h1>
+        <p>A personal development environment for testing serverless functions and edge network behavior on Vercel's platform.</p>
+        <span class="badge">🟢 Active Development</span>
+        <span class="badge">⚡ Vercel Edge</span>
+        <span class="badge">🔧 Serverless</span>
+    </section>
+
+    <section class="features" id="features">
+        <div class="feature-card">
+            <h3>⚡ Serverless Architecture</h3>
+            <p>Built with Vercel's serverless functions for optimal performance and scalability. Zero server maintenance required.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🌍 Edge Network</h3>
+            <p>Deployed across Vercel's global edge network ensuring low latency and high availability worldwide.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🔒 Secure by Default</h3>
+            <p>Automatic SSL/TLS encryption with Vercel's built-in security features. All traffic is encrypted end-to-end.</p>
+        </div>
+        <div class="feature-card">
+            <h3>📊 Performance Monitoring</h3>
+            <p>Integrated with Vercel Analytics for real-time performance metrics and usage statistics.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🔄 CI/CD Integration</h3>
+            <p>Automatic deployments from GitHub. Every push to main triggers a new production deployment.</p>
+        </div>
+        <div class="feature-card">
+            <h3>🧪 Testing Environment</h3>
+            <p>Dedicated staging environment for experimenting with serverless patterns and edge caching strategies.</p>
+        </div>
+    </section>
+
+    <section class="tech-stack" id="tech">
+        <h2>🛠️ Tech Stack</h2>
+        <div class="tech-items">
+            <span class="tech-item">Vercel</span>
+            <span class="tech-item">Serverless Functions</span>
+            <span class="tech-item">Edge Network</span>
+            <span class="tech-item">GitHub Integration</span>
+            <span class="tech-item">SSL/TLS</span>
+            <span class="tech-item">CDN</span>
+        </div>
+    </section>
+
+    <section class="github-section" id="github">
+        <h2>📂 Open Source</h2>
+        <p>This project is open source and available on GitHub.</p>
+        <a href="https://github.com/dr4cary5/shadowx" target="_blank">View on GitHub →</a>
+    </section>
+
+    <footer>
+        <p>© 2026 <a href="https://github.com/dr4cary5">dr4cary5</a> · ShadowX · Powered by <a href="https://vercel.com">Vercel</a></p>
+        <p style="margin-top: 0.5rem;">Not for commercial use. Development and testing purposes only.</p>
+    </footer>
 </body>
 </html>
