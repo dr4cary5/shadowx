@@ -1,61 +1,73 @@
 package handler
 
 import (
+	"io"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"strings"
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	targetURL := r.URL.Query().Get("url")
 
-	// اگر URL داده نشد، صفحه اصلی را نمایش بده
+	// صفحه اصلی با کادر ورود URL
 	if targetURL == "" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Write([]byte(homePage))
 		return
 	}
 
-	// اگر پروتکل نداشت، https را اضافه کن
+	// اضافه کردن پروتکل
 	if !strings.HasPrefix(targetURL, "http://") && !strings.HasPrefix(targetURL, "https://") {
 		targetURL = "https://" + targetURL
 	}
 
-	// پارس کردن URL مقصد
-	target, err := url.Parse(targetURL)
+	// ساخت کلاینت با تنظیمات
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			// دنبال نکردن ریدایرکت برای اینکه کنترل اوضاع دست ما بمونه
+			return http.ErrUseLastResponse
+		},
+	}
+
+	// ساخت درخواست جدید
+	req, err := http.NewRequest("GET", targetURL, nil)
 	if err != nil {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
 	}
 
-	// ساخت Reverse Proxy
-	proxy := httputil.NewSingleHostReverseProxy(target)
+	// تنظیم هدرهای واقعی
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
 
-	// تنظیم Director برای تغییر درخواست
-	defaultDirector := proxy.Director
-	proxy.Director = func(req *http.Request) {
-		defaultDirector(req)
-		req.Host = target.Host
-		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
-		req.Header.Set("Accept-Language", "en-US,en;q=0.9")
-		
-		// حذف هدرهای مزاحم
-		req.Header.Del("X-Forwarded-For")
-		req.Header.Del("X-Real-IP")
+	// ارسال درخواست
+	resp, err := client.Do(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadGateway)
+		return
+	}
+	defer resp.Body.Close()
+
+	// کپی کردن هدرهای پاسخ
+	for key, values := range resp.Header {
+		for _, value := range values {
+			w.Header().Set(key, value)
+		}
 	}
 
-	// تنظیم ModifyResponse برای تغییر پاسخ
-	proxy.ModifyResponse = func(resp *http.Response) error {
-		// حذف هدرهای امنیتی که ممکن است مشکل ایجاد کنند
-		resp.Header.Del("Content-Security-Policy")
-		resp.Header.Del("X-Frame-Options")
-		resp.Header.Del("Strict-Transport-Security")
-		return nil
+	// نوشتن وضعیت پاسخ
+	w.WriteHeader(resp.StatusCode)
+
+	// کپی کردن بدنه پاسخ
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Failed to read response", http.StatusInternalServerError)
+		return
 	}
 
-	// اجرای پروکسی
-	proxy.ServeHTTP(w, r)
+	// نوشتن بدنه پاسخ
+	w.Write(bodyBytes)
 }
 
 const homePage = `<!DOCTYPE html>
