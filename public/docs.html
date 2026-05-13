@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShadowX - Documentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">🕶️ ShadowX</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="docs.html" class="active">Docs</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Documentation</h1>
+        <p>Technical documentation for the ShadowX development environment.</p>
+
+        <div class="card">
+            <h3>📦 Installation</h3>
+            <pre><code>git clone https://github.com/dr4cary5/shadowx.git
+cd shadowx
+npm install</code></pre>
+        </div>
+
+        <div class="card">
+            <h3>🚀 Deployment</h3>
+            <pre><code>git push origin main</code></pre>
+        </div>
+
+        <div class="card">
+            <h3>⚙️ Configuration</h3>
+            <pre><code>{
+  "functions": {
+    "api/*.go": {
+      "memory": 512,
+      "maxDuration": 10
+    }
+  }
+}</code></pre>
+        </div>
+
+        <div class="card">
+            <h3>🧪 Testing</h3>
+            <pre><code>vercel dev
+vercel deploy
+vercel --prod</code></pre>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 <a href="https://github.com/dr4cary5">dr4cary5</a> · ShadowX</p>
+    </footer>
+</body>
+</html>
